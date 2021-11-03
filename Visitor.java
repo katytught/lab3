@@ -72,6 +72,9 @@ public class Visitor extends calcBaseVisitor<Void>{
             String a=visitLval(ctx.lval());
             String s=visitExp(ctx.exp());
             VarList list=VarList.getInstance();
+            if(list.getVar(ctx.lval().getText()).isIsconst()&&list.getVar(ctx.lval().getText()).isInit()){
+                System.exit(-1);
+            }
             list.getVar(ctx.lval().getText()).setInit(true);
             results+="store i32 "+s+", i32* "+ list.getVar(ctx.lval().getText()).getNum()+"\n";
         }
