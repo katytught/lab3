@@ -1,9 +1,12 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 public class Visitor extends calcBaseVisitor<Void>{
     public String results="";
     public int Num=1;
+    public boolean isconst=false;
     static Integer getnumber(String s){
         int res = 0;
         s = s.toLowerCase(Locale.ROOT);
@@ -217,7 +220,9 @@ public class Visitor extends calcBaseVisitor<Void>{
     @Override
     public Void visitDecl(calcParser.DeclContext ctx) {
         if(ctx.constDecl()!=null){
+            isconst=true;
             visit(ctx.constDecl());
+            isconst=false;
         }
         else {
             visit(ctx.varDecl());
@@ -331,6 +336,9 @@ public class Visitor extends calcBaseVisitor<Void>{
     @Override
     public String visitLval(calcParser.LvalContext ctx) {
         Var var=VarList.getInstance().getVar(ctx.getText());
+        if(!var.isIsconst()&&isconst){
+            System.exit(-1);
+        }
         if(var.isInit()){
             results+="%"+Num+" = load i32, i32* "+var.getNum()+"\n";
             Num++;
